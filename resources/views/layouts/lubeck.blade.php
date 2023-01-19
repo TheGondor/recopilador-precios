@@ -33,63 +33,63 @@
         </div>
         <ul class="nav-list" style="height: 370px">
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'') }}" title="Inicio">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'') }}" title="Inicio">
                     <i class='bx bx-home'></i>
                     <span class="links_name">Home Proveedor</span>
                 </a>
                 <span class="tooltip">Home Proveedor</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/buscador') }}" title="Buscador convenio ferretería">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/buscador') }}" title="Buscador convenio ferretería">
                     <i class='bx bxs-search' ></i>
                     <span class="links_name">Buscador</span>
                 </a>
                 <span class="tooltip">Buscador</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/stock') }}" title="Productos con stock">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/stock') }}" title="Productos con stock">
                     <i class='bx bxs-checkbox-checked' ></i>
                     <span class="links_name">Stock</span>
                 </a>
                 <span class="tooltip">Stock</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/sin_stock') }}" title="Productos sin stock">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/sin_stock') }}" title="Productos sin stock">
                     <i class='bx bxs-x-square'></i>
                     <span class="links_name">Sin Stock</span>
                 </a>
                 <span class="tooltip">Sin Stock</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/stock_dispersion') }}" title="Productos con stock fuera de despersión">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/stock_dispersion') }}" title="Productos con stock fuera de despersión">
                     <i class='bx bx-alarm'></i>
                     <span class="links_name">Stock Dispersión</span>
                 </a>
                 <span class="tooltip">Stock Dispersión</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/sin_stock_dispersion') }}" title="Productos sin stock fuera de despersión">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/sin_stock_dispersion') }}" title="Productos sin stock fuera de despersión">
                     <i class='bx bx-alarm-off' ></i>
                     <span class="links_name">Sin Stock Dispersión</span>
                 </a>
                 <span class="tooltip">Sin Stock Dispersión</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/ofertas') }}" title="Productos en oferta">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/ofertas') }}" title="Productos en oferta">
                     <i class='bx bxs-offer'></i>
                     <span class="links_name">Ofertas</span>
                 </a>
                 <span class="tooltip">Ofertas</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/mas-buscados') }}" title="Terminos mas buscados">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/mas-buscados') }}" title="Terminos mas buscados">
                     <i class='bx bx-search-alt' ></i>
                     <span class="links_name">Mas buscados</span>
                 </a>
                 <span class="tooltip">Mas buscados</span>
             </li>
             <li>
-                <a href="{{ asset('provider/'.$provider->id.'/mas-visitas') }}" title="Producto con mas visitas">
+                <a href="{{ asset('provider/'.$provider->id.'/'.$convenio.'/mas-visitas') }}" title="Producto con mas visitas">
                     <i class='bx bx-link-external'></i>
                     <span class="links_name">Mas visitados</span>
                 </a>

@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use App\Models\Provider;
 use Illuminate\Support\Carbon;
 use Yajra\DataTables\DataTables;
+use App\Models\Product_provider;
 
 class HomeController extends Controller
 {
@@ -19,7 +20,7 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['except' => [
-            'updateProducts', 'updateFerreteria'
+            'updateProducts', 'updateFerreteria', 'addAseo'
         ]]);
     }
 
@@ -38,147 +39,69 @@ class HomeController extends Controller
         return view('select');
     }
 
-    public function updateProducts(Request $request)
+    public function providers($convenio)
     {
-        if($request->auth == 'Upd4t3Pr0ducts'){
-            $productos = json_decode($request->products);
-            foreach($productos as $producto){
-                $select = Product::where('id', $producto->id)->first();
-                if($select){
-                    $select->name = $producto->name;
-                    $select->convenio = $producto->convenio;
-                    $select->price = $producto->price;
-                    $select->special = $producto->special;
-                    $select->lubeck_price = $producto->lubeck_price;
-                    $select->lubeck_status = $producto->lubeck_status;
-                    $select->url = $producto->url;
-                    $select->url_image = $producto->url_image;
-                    $select->lubeck_special = $producto->lubeck_special;
-                    $select->cataluna_price = $producto->cataluna_price;
-                    $select->cataluna_status = $producto->cataluna_status;
-                    $select->cataluna_special = $producto->cataluna_special;
-                }
-                else{
-                    $select = new Product;
-                    $select->product_id = $producto->id;
-                    $select->name = $producto->name;
-                    $select->convenio = $producto->convenio;
-                    $select->price = $producto->price;
-                    $select->special = $producto->special;
-                    $select->lubeck_price = $producto->lubeck_price;
-                    $select->lubeck_status = $producto->lubeck_status;
-                    $select->url = $producto->url;
-                    $select->url_image = $producto->url_image;
-                    $select->lubeck_special = $producto->lubeck_special;
-                    $select->cataluna_price = $producto->cataluna_price;
-                    $select->cataluna_status = $producto->cataluna_status;
-                    $select->cataluna_special = $producto->cataluna_special;
-                }
-                $select->save();
-            }
-        }
-
-        return response()->json(['resultado' => 'Update Product Realizado']);
-    }
-
-    public function sendProducts()
-    {
-        $productos = Product::all();
-        $auth = 'Upd4t3Pr0ducts';
-
-        $client = new Client(['base_uri' => 'https://test.gusmudev.cl']);
-
-        $cantidad = $productos->count();
-        $i = 0;
-        while($i <= $cantidad){
-            $response = $client->request('POST', '/updateProducts', ['form_params' => [
-                'products' => json_encode($productos->splice($i, 1000)),
-                'auth' => $auth
-            ],
-            'verify'=>false]);
-
-            echo '<br>'.$response->getBody();
-            echo '<br>'.$i.' hasta '.$i+1000;
-            $i = $i +1000;
-        }
-
-
-    }
-
-    public function updateFerreteria(Request $request)
-    {
-        if($request->auth == 'Upd4t3Pr0ducts'){
-            $productos = json_decode($request->products);
-            foreach($productos as $producto){
-                //return response()->json(['resultado' => $producto]);
-                $select = Ferreteria::where('id', $producto->id)->first();
-                if($select){
-                    $select->name = $producto->name;
-                    $select->category = $producto->category;
-                    $select->price = $producto->price;
-                    $select->special = $producto->special;
-                    $select->lubeck_price = $producto->lubeck_price;
-                    $select->lubeck_status = $producto->lubeck_status;
-                    $select->cataluna_price = $producto->cataluna_price;
-                    $select->cataluna_status = $producto->cataluna_status;
-                    $select->url = $producto->url;
-                    $select->url_image = $producto->url_image;
-                    if($select->lubeck_special != 0 && $select->lubeck_special_date != NULL && $producto->lubeck_special == 0){
-                        $select->lubeck_special_date = Carbon::now()->format('Y-m-d');
-                    }
-                    $select->lubeck_special = $producto->lubeck_special;
-                    if($select->cataluna_special != 0 && $select->cataluna_special_date != NULL && $producto->cataluna_special == 0){
-                        $select->cataluna_special_date = Carbon::now()->format('Y-m-d');
-                    }
-                    $select->cataluna_special = $producto->cataluna_special;
-                }
-                else{
-                    $select = new Ferreteria;
-                    $select->product_id = $producto->id;
-                    $select->name = $producto->name;
-                    $select->category = $producto->category;
-                    $select->price = $producto->price;
-                    $select->special = $producto->special;
-                    $select->lubeck_price = $producto->lubeck_price;
-                    $select->lubeck_status = $producto->lubeck_status;
-                    $select->url = $producto->url;
-                    $select->url_image = $producto->url_image;
-                    $select->lubeck_special = $producto->lubeck_special;
-                    $select->cataluna_price = $producto->cataluna_price;
-                    $select->cataluna_status = $producto->cataluna_status;
-                    $select->cataluna_special = $producto->cataluna_special;
-                }
-                $select->save();
-            }
-        }
-
-        return response()->json(['resultado' => 'Update Ferreteria Realizado']);
-    }
-
-    public function sendFerreteria()
-    {
-        $productos = Ferreteria::all();
-        $auth = 'Upd4t3Pr0ducts';
-
-        $client = new Client(['base_uri' => 'https://test.gusmudev.cl']);
-
-        $response = $client->request('POST', '/updateFerreteria', ['form_params' => [
-            'products' => json_encode($productos),
-            'auth' => $auth
-        ],
-        'verify'=>false]);
-
-        echo $response->getBody();
-    }
-
-    public function providers()
-    {
-        $providers = Provider::all();
+        $providers = Provider::join('product_providers', function($query) use ($convenio){
+            $query->on('providers.id', '=', 'product_providers.provider_id');
+            $query->join('products', function($query) use ($convenio){
+                $query->on('products.id', '=', 'product_providers.product_id');
+                $query->where('products.convenio', $convenio);
+            });
+        })->groupBy(['providers.id', 'providers.name'])->get(['providers.id', 'providers.name']);
         return DataTables::of($providers)
-            ->addColumn('name', function (Provider $provider) {
-                return "<a href='/provider/$provider->id' target='_self'>$provider->name</a>";
+            ->addColumn('name', function (Provider $provider) use ($convenio){
+                return "<a href='/provider/$provider->id/$convenio' target='_self'>$provider->name</a>";
             })
             ->rawColumns(['name'])
             ->toJson();
+    }
+
+    public function addAseo(Request $request){
+        if($request->password == 'pruebaDer83rnjer39$#*#$('){
+            $products = json_decode($request->data, true);
+            $id = '';
+            $new_product = null;
+            foreach($products as $product){
+                if($new_product == null){
+                    $new_product = Product::where('product_id', 'ID '.$request->id)->first();
+                    if(!$new_product){
+                        $new_product = new Product();
+                    }
+                    $new_product->name = $product['producto'];
+                    $new_product->product_id = 'ID '.$product['id'];
+                    $new_product->url = $request->url;
+                    $new_product->url_image = $product['url_image'];
+                    $new_product->price = str_replace(['$', '.', ','], '', $product['precio']);
+                    $new_product->convenio  = 'Aseo';
+                    $new_product->category  = 'Accesorios e implementos de aseo';
+                    $new_product->save();
+                }
+
+                if(str_replace(['$', '.', ','], '', $product['precio']) < $new_product->price){
+                    $new_product->price = str_replace(['$', '.', ','], '', $product['precio']);
+                    $new_product->save();
+                }
+
+                $provider = Provider::where('name', $product['empresa'])->first();
+                    if(!$provider){
+                        $provider = Provider::create([
+                            'name' => $product['empresa']
+                        ]);
+                    }
+                Product_provider::updateOrCreate(
+                    [
+                        'product_id' => $new_product->id,
+                        'provider_id' => $provider->id
+                    ],
+                    [
+                        'price' => str_replace(['$', '.', ','], '', $product['precio']),
+                        'special' => str_replace(['$', '.', ','], '', $product['oferta']),
+                        'status' => $product['stock'] == 'stock' ? Product::STOCK : Product::NO_STOCK
+                    ]
+                );
+                $id = $new_product->id;
+            }
+            return $id;
+        }
     }
 }

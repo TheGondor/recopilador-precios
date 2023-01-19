@@ -20,47 +20,47 @@ class DashboardController extends Controller
         $this->middleware("auth");
     }
 
-    public function home(Provider $provider)
+    public function home(Provider $provider, $convenio)
     {
-        $stock_dispersion = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $stock_dispersion = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::STOCK_DISPERSION)->count();
-        $sin_stock_dispersion = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $sin_stock_dispersion = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::NO_STOCK_DISPERSION)->count();
-        $stock = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $stock = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::STOCK)->count();
-        $sin_stock = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $sin_stock = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::NO_STOCK)->count();
-        return view('provider.home', compact('stock_dispersion', 'sin_stock_dispersion', 'stock', 'sin_stock', 'provider'));
+        return view('provider.home', compact('stock_dispersion', 'sin_stock_dispersion', 'stock', 'sin_stock', 'provider', 'convenio'));
     }
 
-    public function stock(Provider $provider)
+    public function stock(Provider $provider, $convenio)
     {
-        return view('provider.stock', compact('provider'));
+        return view('provider.stock', compact('provider', 'convenio'));
     }
 
-    public function stockList(Provider $provider)
+    public function stockList(Provider $provider, $convenio)
     {
-        $products = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $products = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
@@ -115,14 +115,14 @@ class DashboardController extends Controller
             ->toJson();
     }
 
-    public function sinStock(Provider $provider)
+    public function sinStock(Provider $provider, $convenio)
     {
-        return view('provider.sinStock', compact('provider'));
+        return view('provider.sinStock', compact('provider', 'convenio'));
     }
 
-    public function sinStockList(Provider $provider)
+    public function sinStockList(Provider $provider, $convenio)
     {
-        $products = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $products = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
@@ -160,14 +160,14 @@ class DashboardController extends Controller
             ->toJson();
     }
 
-    public function stockDispersion(Provider $provider)
+    public function stockDispersion(Provider $provider, $convenio)
     {
-        return view('provider.stockDispersion', compact('provider'));
+        return view('provider.stockDispersion', compact('provider', 'convenio'));
     }
 
-    public function stockDispersionList(Provider $provider)
+    public function stockDispersionList(Provider $provider, $convenio)
     {
-        $products = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $products = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
@@ -198,14 +198,14 @@ class DashboardController extends Controller
             ->toJson();
     }
 
-    public function sinStockDispersion(Provider $provider)
+    public function sinStockDispersion(Provider $provider, $convenio)
     {
-        return view('provider.sinStockDispersion', compact('provider'));
+        return view('provider.sinStockDispersion', compact('provider', 'convenio'));
     }
 
-    public function sinStockDispersionList(Provider $provider)
+    public function sinStockDispersionList(Provider $provider, $convenio)
     {
-        $products = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $products = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
@@ -236,14 +236,14 @@ class DashboardController extends Controller
             ->toJson();
     }
 
-    public function oferta(Provider $provider)
+    public function oferta(Provider $provider, $convenio)
     {
-        return view('provider.oferta', compact('provider'));
+        return view('provider.oferta', compact('provider', 'convenio'));
     }
 
-    public function ofertaList(Request $request, Provider $provider)
+    public function ofertaList(Request $request, Provider $provider, $convenio)
     {
-        $products = Product::where('convenio', 'Ferretería')->join('product_providers', function($query) use ($provider){
+        $products = Product::where('convenio', $convenio)->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->join('providers', function($query) use ($provider){
                 $query->on('providers.id', '=', 'product_providers.provider_id');
@@ -357,7 +357,7 @@ class DashboardController extends Controller
             ->toJson();
     }
 
-    public function modalOferta(Request $request, Provider $provider)
+    public function modalOferta(Request $request, Provider $provider, $convenio)
     {
         $id = $request->id;
         $idModal = $request->idModal;
