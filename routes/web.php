@@ -24,6 +24,14 @@ Route::post('addAseo', [HomeController::class, 'addAseo']);
 
 Route::get('excel/{convenio}', [App\Http\Controllers\Provider\ConvenioController::class, 'summary']);
 
+Route::get('provider/{provider}/{convenio}/excel', [App\Http\Controllers\Provider\ConvenioController::class, 'summaryProvider']);
+
+Route::get('provider/{provider}/{convenio}/excelFaltantes', [App\Http\Controllers\Provider\ConvenioController::class, 'missing']);
+
+Route::get('provider/{provider}/{convenio}/lubeckFaltantes', [App\Http\Controllers\Provider\ConvenioController::class, 'faltanteLubeck']);
+
+Route::get('provider/{provider}/{convenio}/lubeck', [App\Http\Controllers\Provider\ConvenioController::class, 'lubeck']);
+
 Route::get('scrapping', [ConvenioMarcoController::class, 'scrapping']);
 
 Route::get('resultados', [ConvenioMarcoController::class, 'search']);
@@ -80,9 +88,9 @@ Route::post('provider/{provider}/{convenio}/oferta-fecha', [App\Http\Controllers
 
 Route::get('provider/{provider}/{convenio}/ferreteria', [App\Http\Controllers\Provider\FerreteriaController::class, 'summary']);
 
-Route::get('provider/{provider}/{convenio}/offers', [App\Http\Controllers\Provider\FerreteriaController::class, 'offers']);
+Route::get('provider/{provider}/{convenio}/offers', [App\Http\Controllers\Provider\ConvenioController::class, 'offers']);
 
-Route::get('provider/{provider}/{convenio}/offersProviders', [App\Http\Controllers\Provider\FerreteriaController::class, 'offersProvider']);
+Route::get('provider/{provider}/{convenio}/offersProviders', [App\Http\Controllers\Provider\ConvenioController::class, 'offersProvider']);
 
 Route::post('provider/{provider}/{convenio}/priceList', [App\Http\Controllers\Provider\DashboardController::class, 'pricesList']);
 

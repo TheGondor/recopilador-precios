@@ -22,8 +22,8 @@
             <tbody>
             </tbody>
         </table>
-        <a href='/provider/{{ $provider->id}}/offers' target="_blank" class='btn btn-sm btn-outline-success m-1 px-3' title='Descargar'><i class="fas fa-file-excel"></i> {{ $provider->name}}</a>
-        <a href='/provider/{{ $provider->id}}/offersProviders' target="_blank" class='btn btn-sm btn-outline-success m-1 px-3' title='Descargar'><i class="fas fa-file-excel"></i> Todos Proveedores</a>
+        <a href='/provider/{{ $provider->id}}/{{ $convenio }}/offers' target="_blank" class='btn btn-sm btn-outline-success m-1 px-3' title='Descargar'><i class="fas fa-file-excel"></i> {{ $provider->name}}</a>
+        <a href='/provider/{{ $provider->id}}/{{ $convenio }}/offersProviders' target="_blank" class='btn btn-sm btn-outline-success m-1 px-3' title='Descargar'><i class="fas fa-file-excel"></i> Todos Proveedores</a>
     </div>
 </div>
 <script src="{{ asset('js/provider/oferta.js') }}"></script>

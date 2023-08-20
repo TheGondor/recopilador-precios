@@ -59,49 +59,46 @@ class HomeController extends Controller
     public function addAseo(Request $request){
         if($request->password == 'pruebaDer83rnjer39$#*#$('){
             $products = json_decode($request->data, true);
-            $id = '';
-            $new_product = null;
+            $new_product = Product::where('product_id', $request->product_id)->first();
+            if(!$new_product){
+                $new_product = new Product();
+            }
+            $new_product->name = $request->product_name;
+            $new_product->product_id = $request->product_id;
+            $new_product->url = $request->product_url;
+            $new_product->url_image = $request->product_url_image;
+            $new_product->price = str_replace(['$', '.', ','], '', $request->product_price);
+            $new_product->special = str_replace(['$', '.', ','], '', $request->product_special);
+            $new_product->convenio  = 'Aseo';
+            $new_product->category  = 'Accesorios e implementos de aseo';
+            $new_product->save();
             foreach($products as $product){
-                if($new_product == null){
-                    $new_product = Product::where('product_id', 'ID '.$request->id)->first();
-                    if(!$new_product){
-                        $new_product = new Product();
-                    }
-                    $new_product->name = $product['producto'];
-                    $new_product->product_id = 'ID '.$product['id'];
-                    $new_product->url = $request->url;
-                    $new_product->url_image = $product['url_image'];
-                    $new_product->price = str_replace(['$', '.', ','], '', $product['precio']);
-                    $new_product->convenio  = 'Aseo';
-                    $new_product->category  = 'Accesorios e implementos de aseo';
+                if((str_replace(['$', '.', ','], '', $request->product_id) < $new_product->price && str_replace(['$', '.', ','], '', $product['price']) != 0) || $new_product->price == 0){
+                    $new_product->price = str_replace(['$', '.', ','], '', $product['price']);
                     $new_product->save();
                 }
 
-                if(str_replace(['$', '.', ','], '', $product['precio']) < $new_product->price){
-                    $new_product->price = str_replace(['$', '.', ','], '', $product['precio']);
-                    $new_product->save();
-                }
-
-                $provider = Provider::where('name', $product['empresa'])->first();
+                $provider = Provider::where('name', $product['providerName'])->first();
                     if(!$provider){
                         $provider = Provider::create([
-                            'name' => $product['empresa']
+                            'name' => $product['providerName']
                         ]);
                     }
                 Product_provider::updateOrCreate(
                     [
                         'product_id' => $new_product->id,
-                        'provider_id' => $provider->id
+                        'provider_id' => $provider->id,
+                        'region' => $request->region,
+                        'region_id' => $product['id'],
                     ],
                     [
-                        'price' => str_replace(['$', '.', ','], '', $product['precio']),
-                        'special' => str_replace(['$', '.', ','], '', $product['oferta']),
+                        'price' => str_replace(['$', '.', ','], '', $product['price']),
+                        'special' => str_replace(['$', '.', ','], '', $product['special']),
                         'status' => $product['stock'] == 'stock' ? Product::STOCK : Product::NO_STOCK
                     ]
                 );
-                $id = $new_product->id;
             }
-            return $id;
+            return $new_product->product_id;
         }
     }
 }

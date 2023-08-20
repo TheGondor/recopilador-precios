@@ -44,6 +44,7 @@
     <div>
         <div id="chart_div"></div>
     </div>
-    <a href='/provider/{{ $provider->id}}/ferreteria' target="_blank" class='btn btn-sm btn-outline-success m-1 px-3' title='Descargar'><i class="fas fa-file-excel"></i> Descargar Excel</a>
+    <a href='/provider/{{ $provider->id}}/{{ $convenio}}/excel' target="_blank" class='btn btn-sm btn-outline-success m-1 px-3' title='Descargar'><i class="fas fa-file-excel"></i> Excel productos Proveedor</a>
+    <a href='/provider/{{ $provider->id}}/{{ $convenio}}/excelFaltantes' target="_blank" class='btn btn-sm btn-outline-success m-1 px-3' title='Descargar'><i class="fas fa-file-excel"></i> Excel productos faltantes</a>
 </div>
 @endsection

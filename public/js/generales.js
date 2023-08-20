@@ -109,6 +109,31 @@ function ajaxModal(url, id = 0, idModal){
 
 }
 
+function ajaxModalOptional(url, id = 0, idModal, payload = {}){
+    let newmodal = document.getElementById(idModal);
+
+    if(newmodal){
+        $("#div-"+idModal).remove();
+    }
+    $("#modales").append("<div id='div-"+idModal+"'></div>");
+    $("#div-"+idModal).load(url, {...payload, _token: $('meta[name="csrf-token"]').attr('content'), id: id , idModal: idModal}, function(response, status, xhr){
+        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+            modal.out();
+            $("#"+idModal).modal("show");
+        }
+        else{
+            modal.out();
+            Swal.fire({
+                type: 'error',
+                title: 'Ha ocurrido un error',
+                text: 'Error al cargar el modal'
+              });
+        }
+
+    });
+
+}
+
 $(window).on('hidden.bs.modal', function () {
     if($('.modal-stack').length > 0)
     {

@@ -219,8 +219,6 @@ class ScrapperService
         $product->price = $price;
         $product->special = $special;
         $product->save();
-        print_r($product);
-        exit();
         $crawler->filter('.wk-table-product-list tr')->each(function ($node) use ($product){
             $proveedor = $node->filter('.wk-ap-checkbox-id input');
             if($proveedor->count() > 0){

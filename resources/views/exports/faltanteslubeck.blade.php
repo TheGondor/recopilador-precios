@@ -4,6 +4,9 @@
         <th>ID</th>
         <th>Nombre</th>
         <th>Precio Normal</th>
+        <th>Precio Oferta</th>
+        <th>Precio Lubeck</th>
+        <th>Precio Oferta Lubeck</th>
     </tr>
     </thead>
     <tbody>
@@ -12,13 +15,9 @@
             <td>{{ substr($product->product_id, 2) }}</td>
             <td>{{ $product->name }}</td>
             <td>{{ $product->price }}</td>
-            <td>
-            @if ($product->special != 0)
-            {{ $product->special }}
-            @else
-                Sin Oferta
-            @endif
-            </td>
+            <td>{{ $product->special == 0 ? 'Sin oferta' : $product->special  }}</td>
+            <td>{{ $product->provider_price }}</td>
+            <td>{{ $product->provider_special == 0 ? 'Sin oferta' : $product->provider_special  }}</td>
         </tr>
     @endforeach
     </tbody>

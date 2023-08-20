@@ -40,7 +40,7 @@ $('#tabla_stock').DataTable({
     }
 });
 
-function modalPrice(id){
+function modalPrice(id, region){
     modal = cargando("Cargando");
-    ajaxModal("modal-view-prices", id, "modalPrice");
+    ajaxModalOptional("modal-view-prices", id, "modalPrice", { region: region});
 }

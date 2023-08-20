@@ -16,7 +16,11 @@ class DashboardService
             $query->join('providers', function($query) {
                 $query->on('providers.id', '=', 'product_providers.provider_id');
             });
-        })->whereIn('product_providers.status', [Product::STOCK, Product::STOCK_DISPERSION])
+        })
+        ->when($request->region != 0, function($query) use ($request){
+            $query->where('product_providers.region', $request->region);
+        })
+        ->whereIn('product_providers.status', [Product::STOCK, Product::STOCK_DISPERSION])
         ->get(['providers.name', 'product_providers.price as provider_price', 'product_providers.special as provider_special']);
         return DataTables::of($products)
             ->addColumn('id', function (Product $product) {
@@ -46,9 +50,10 @@ class DashboardService
             ->toJson();
     }
 
-    public function modalPrice($id, $idModal){
+    public function modalPrice($id, $idModal, $region = 0)
+    {
         $product = Product_provider::where("product_id", $id)->first();
         $hoy = Carbon::now()->format('Y-m-d');
-        return view('provider.modal.prices', compact('idModal', 'product', 'hoy'));
+        return view('provider.modal.prices', compact('idModal', 'product', 'hoy', 'region'));
     }
 }

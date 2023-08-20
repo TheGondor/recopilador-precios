@@ -35,6 +35,25 @@ class Product extends Model
         ->get();
     }
 
+    public function offersProvidersAseo($region)
+    {
+        return Product::select([
+            'products.name as product',
+            'products.id as productId',
+            'providers.id',
+            'providers.name',
+            'product_providers.special',
+        ])->join('product_providers', function($query) use ($region) {
+            $query->on('products.id', '=', 'product_providers.product_id');
+            $query->where('product_providers.special', '!=', 0)->where('product_providers.region', $region);
+            $query->join('providers', function($query){
+                $query->on('providers.id', '=', 'product_providers.provider_id');
+            });
+        })->whereIn('product_providers.status', [Product::STOCK, Product::STOCK_DISPERSION])
+        ->where('products.id', $this->id)
+        ->get();
+    }
+
     public function providerPrice($provider){
         $price = Product::select([
             'products.name as product',
@@ -43,6 +62,20 @@ class Product extends Model
         ])->join('product_providers', function($query) use ($provider){
             $query->on('products.id', '=', 'product_providers.product_id');
             $query->where('product_providers.provider_id', $provider->id);
+        })
+        ->where('products.id', $this->id)
+        ->first();
+        return $price ? $price->price : 0;
+    }
+
+    public function providerPriceAseo($provider, $region){
+        $price = Product::select([
+            'products.name as product',
+            'products.id as productId',
+            'product_providers.price',
+        ])->join('product_providers', function($query) use ($provider, $region){
+            $query->on('products.id', '=', 'product_providers.product_id');
+            $query->where('product_providers.provider_id', $provider->id)->where('product_providers.region', $region);
         })
         ->where('products.id', $this->id)
         ->first();

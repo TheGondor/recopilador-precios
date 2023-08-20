@@ -67,10 +67,10 @@ class DashboardController extends Controller
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::STOCK)
-        ->get(['products.id', 'products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special']);
+        ->get(['products.id', 'products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special', 'product_providers.region_id', 'product_providers.region']);
         return DataTables::of($products)
             ->addColumn('id', function (Product $product) {
-                $id = substr($product->product_id, 2) ;
+                $id = $product->region_id == 0 ? substr($product->product_id, 2) : substr($product->region_id, 2).'-'.$product->region ;
                 return "
                     <a href='$product->url' target='_blank'>$id</a>";
             })
@@ -95,10 +95,10 @@ class DashboardController extends Controller
                 if($product->provider_special != 0){
                     $normal = number_format( $product->provider_price, 0, "", ".");
                     $provider_special = number_format( $product->provider_special, 0, "", ".");
-                    return "<div onclick='modalPrice($product->id)' role='button'><span class='d-none'>$product->provider_special</span><span class='text-danger oferta'>$$provider_special</span><span class='text-decoration-line-through text-black-50'> $$normal</span></div>";
+                    return "<div onclick='modalPrice($product->id, $product->region)' role='button'><span class='d-none'>$product->provider_special</span><span class='text-danger oferta'>$$provider_special</span><span class='text-decoration-line-through text-black-50'> $$normal</span></div>";
                 }
                 $price = number_format( $product->provider_price, 0, "", ".");
-                return "<div class='text-primary' role='button' onclick='modalPrice($product->id)'><span class='d-none'>$product->provider_price</span>$$price</div>";
+                return "<div class='text-primary' role='button' onclick='modalPrice($product->id, $product->region)'><span class='d-none'>$product->provider_price</span>$$price</div>";
             })
             ->addColumn('ofertar', function (Product $product) {
                 $min_price = $product->special <= $product->price && $product->special != 0? $product->special : $product->price;
@@ -129,10 +129,10 @@ class DashboardController extends Controller
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::NO_STOCK)
-        ->get(['products.id', 'products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special']);
+        ->get(['products.id', 'products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special', 'product_providers.region_id', 'product_providers.region']);
         return DataTables::of($products)
             ->addColumn('id', function (Product $product) {
-                $id = substr($product->product_id, 2) ;
+                $id = $product->region_id == 0 ? substr($product->product_id, 2) : substr($product->region_id, 2).'-'.$product->region ;
                 return "
                     <a href='$product->url' target='_blank'>$id</a>";
             })
@@ -152,9 +152,9 @@ class DashboardController extends Controller
                 if($product->lubeck_special != 0){
                     $normal = number_format( $product->provider_price, 0, "", ".");
                     $provider_special = number_format( $product->provider_special, 0, "", ".");
-                    return "<div role='button' onclick='modalPrice($product->id)'><span class='d-none'>$product->provider_special</span><span class='text-danger oferta'>$$provider_special</span><span class='text-decoration-line-through text-black-50'> $$normal</span></div>";
+                    return "<div role='button' onclick='modalPrice($product->id, $product->region)'><span class='d-none'>$product->provider_special</span><span class='text-danger oferta'>$$provider_special</span><span class='text-decoration-line-through text-black-50'> $$normal</span></div>";
                 }
-                return "<div role='button' class='text-primary' onclick='modalPrice($product->id)'><span class='d-none'>$product->provider_price</span>".'$'.number_format( $product->provider_price, 0, "", ".").'</div>';
+                return "<div role='button' class='text-primary' onclick='modalPrice($product->id, $product->region)'><span class='d-none'>$product->provider_price</span>".'$'.number_format( $product->provider_price, 0, "", ".").'</div>';
             })
             ->rawColumns(['id', 'name', 'price', 'provider_price'])
             ->toJson();
@@ -174,10 +174,10 @@ class DashboardController extends Controller
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::STOCK_DISPERSION)
-        ->get(['products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special']);
+        ->get(['products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special', 'product_providers.region_id', 'product_providers.region']);
         return DataTables::of($products)
             ->addColumn('id', function (Product $product) {
-                $id = substr($product->product_id, 2) ;
+                $id = $product->region_id == 0 ? substr($product->product_id, 2) : substr($product->region_id, 2).'-'.$product->region ;
                 return "
                     <a href='$product->url' target='_blank'>$id</a>";
             })
@@ -212,7 +212,7 @@ class DashboardController extends Controller
                 $query->where('providers.name', $provider->name);
             });
         })->where('product_providers.status', Product::NO_STOCK_DISPERSION)
-        ->get(['products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special']);
+        ->get(['products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special', 'product_providers.region_id', 'product_providers.region']);
         return DataTables::of($products)
             ->addColumn('id', function (Product $producto) {
                 $id = substr($producto->product_id, 2) ;
@@ -251,11 +251,11 @@ class DashboardController extends Controller
             });
         })->where('product_providers.status', Product::STOCK)
         ->where('product_providers.special', '!=', 0)
-        ->get(['products.id', 'products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special', 'product_providers.special_date as special_date']);
+        ->get(['products.id', 'products.product_id', 'products.name', 'products.url', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special', 'product_providers.special_date as special_date', 'product_providers.region_id', 'product_providers.region']);
 
         return DataTables::of($products)
             ->addColumn('id', function (Product $product) {
-                $id = substr($product->product_id, 2) ;
+                $id = $product->region == 0 ? substr($product->product_id, 2) : substr($product->region_id, 2).'-'.$product->region ;
                 return "
                     <a href='$product->url' target='_blank'>$id</a>";
             })
@@ -403,7 +403,8 @@ class DashboardController extends Controller
     public function modalPrices(Request $request){
         $idModal = $request->idModal;
         $id = $request->id;
+        $region = $request->region;
         $service = new DashboardService;
-        return $service->modalPrice($id, $idModal);
+        return $service->modalPrice($id, $idModal, $region);
     }
 }

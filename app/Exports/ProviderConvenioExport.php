@@ -12,14 +12,16 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class ConvenioExport implements FromView, WithTitle, ShouldAutoSize, WithStyles, WithEvents
+class ProviderConvenioExport implements FromView, WithTitle, ShouldAutoSize, WithStyles, WithEvents
 {
     public $convenio;
     public $count;
+    public $provider;
 
-    public function __construct($convenio)
+    public function __construct($convenio, $provider)
     {
         $this->convenio = $convenio;
+        $this->provider = $provider;
     }
 
     /**
@@ -27,10 +29,27 @@ class ConvenioExport implements FromView, WithTitle, ShouldAutoSize, WithStyles,
      */
     public function view(): View
     {
-        $products = Product::where('convenio', $this->convenio)->get();
-        $this->count = Product::where('convenio', $this->convenio)->count();
-        return view('exports.convenio', [
-            'products' => $products
+        $provider = $this->provider;
+        $products = Product::where('convenio', $this->convenio)->join('product_providers', function($query) use ($provider){
+            $query->on('products.id', '=', 'product_providers.product_id');
+            $query->join('providers', function($query) use ($provider){
+                $query->on('providers.id', '=', 'product_providers.provider_id');
+                $query->where('providers.id', $provider);
+            });
+        })
+        ->get(['products.product_id', 'products.name', 'products.price','products.special','product_providers.price as provider_price', 'product_providers.special as provider_special', 'product_providers.status as provider_status']);
+        $this->count = Product::where('convenio', $this->convenio)->join('product_providers', function($query) use ($provider){
+            $query->on('products.id', '=', 'product_providers.product_id');
+            $query->join('providers', function($query) use ($provider){
+                $query->on('providers.id', '=', 'product_providers.provider_id');
+                $query->where('providers.id', $provider);
+            });
+        })
+        ->count();
+
+        return view('exports.ferreteria', [
+            'products' => $products,
+            'provider' => $this->provider
         ]);
     }
 
@@ -53,7 +72,7 @@ class ConvenioExport implements FromView, WithTitle, ShouldAutoSize, WithStyles,
             AfterSheet::class    => function(AfterSheet $event) {
                 for($i = 2; $i <= $this->count + 1; $i++){
                     if($i % 2 == 0){
-                        $event->sheet->getDelegate()->getStyle("A$i:D$i")
+                        $event->sheet->getDelegate()->getStyle("A$i:G$i")
                         ->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()

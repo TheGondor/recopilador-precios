@@ -11,15 +11,18 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Illuminate\Support\Facades\DB;
 
-class ConvenioExport implements FromView, WithTitle, ShouldAutoSize, WithStyles, WithEvents
+class ConvenioFaltanteExport implements FromView, WithTitle, ShouldAutoSize, WithStyles, WithEvents
 {
     public $convenio;
+    public $provider;
     public $count;
 
-    public function __construct($convenio)
+    public function __construct($convenio, $provider)
     {
         $this->convenio = $convenio;
+        $this->provider = $provider;
     }
 
     /**
@@ -27,8 +30,13 @@ class ConvenioExport implements FromView, WithTitle, ShouldAutoSize, WithStyles,
      */
     public function view(): View
     {
-        $products = Product::where('convenio', $this->convenio)->get();
-        $this->count = Product::where('convenio', $this->convenio)->count();
+        $provider = $this->provider;
+        $products = Product::where('convenio', $this->convenio)->whereNotIn('id', function($query)use($provider){
+            $query->select('product_providers.product_id')->from('product_providers')->where('product_providers.provider_id', $provider);
+        })->get();
+        $this->count = Product::where('convenio', $this->convenio)->whereNotIn('id', function($query)use($provider){
+            $query->select('product_providers.product_id')->from('product_providers')->where('product_providers.provider_id', $provider);
+        })->count();
         return view('exports.convenio', [
             'products' => $products
         ]);
@@ -36,7 +44,7 @@ class ConvenioExport implements FromView, WithTitle, ShouldAutoSize, WithStyles,
 
     public function title(): string
     {
-        return 'Productos';
+        return 'Productos faltantes';
     }
 
     public function styles(Worksheet $sheet)

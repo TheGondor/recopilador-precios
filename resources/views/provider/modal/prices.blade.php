@@ -40,7 +40,8 @@
                 url: "priceList",
                 type: 'POST',
                 data: {
-                    id : '{{ $product->product_id }}'
+                    id : '{{ $product->product_id }}',
+                    region: '{{ $region }}'
                 }
             },
             columns:[

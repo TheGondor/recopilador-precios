@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('price');
             $table->integer('special')->nullable();
             $table->integer('status');
+            $table->integer('region')->nullable();
+            $table->string('region_id')->nullable();
             $table->date('special_date')->nullable();
             $table->foreign('product_id')->references('id')->on('products');
             $table->foreign('provider_id')->references('id')->on('providers');
