@@ -22,6 +22,8 @@ Route::get('/', function () {
 
 Route::post('addAseo', [HomeController::class, 'addAseo']);
 
+Route::post('addOficina', [HomeController::class, 'addOficina']);
+
 Route::get('excel/{convenio}', [App\Http\Controllers\Provider\ConvenioController::class, 'summary']);
 
 Route::get('provider/{provider}/{convenio}/excel', [App\Http\Controllers\Provider\ConvenioController::class, 'summaryProvider']);

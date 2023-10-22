@@ -15,7 +15,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Provider;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\FerreteriaExport;
-
+use App\Exports\OfferProviderWithRegionsExport;
+use App\Exports\OficinaExport;
 
 class ConvenioController extends Controller
 {
@@ -31,6 +32,9 @@ class ConvenioController extends Controller
         }
         if($convenio == 'aseo'){
             return (new AseoExport($provider->id))->download($provider->name.'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        }
+        if($convenio == 'oficina'){
+            return (new OficinaExport($provider->id))->download($provider->name.'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
         }
         return Excel::download(new ProviderConvenioExport($convenio, $provider->id), $provider->name.'.xlsx');
     }
@@ -56,6 +60,9 @@ class ConvenioController extends Controller
     {
         if($convenio == 'aseo'){
             return (new AseoOfferProviderExport($provider))->download($provider->name.'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        }
+        if(in_array($convenio, ['Oficina'])){
+            return (new OfferProviderWithRegionsExport($provider, $convenio))->download($provider->name.'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
         }
         return Excel::download(new OffersProvidersExport($provider, $convenio), 'Ofertas Proveedores.xlsx');
     }
